@@ -148,5 +148,11 @@
     "type": "text",
     "default": "",
     "hint": "在 ComfyUI 中导出 API 格式工作流，在 prompt 文本处填入 [PROMPT] 和 [NEGATIVE_PROMPT] 占位符"
+  },
+  "image_ttl_hours": {
+    "description": "图片保留时间（小时）",
+    "type": "int",
+    "default": 24,
+    "hint": "超过时间的临时图片自动清理，0 为立即删除"
   }
 }
