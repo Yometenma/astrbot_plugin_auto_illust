@@ -1,0 +1,140 @@
+{
+  "trigger_mode": {
+    "description": "触发模式",
+    "type": "string",
+    "default": "probability",
+    "hint": "probability: 概率触发 / interval: 每 N 轮触发 / manual: 仅手动"
+  },
+  "probability": {
+    "description": "概率触发值",
+    "type": "float",
+    "default": 0.3,
+    "hint": "仅在 probability 模式下生效，0.3 即 30%"
+  },
+  "interval": {
+    "description": "间隔轮数",
+    "type": "int",
+    "default": 3,
+    "hint": "仅在 interval 模式下生效，每 N 轮触发一次"
+  },
+  "cooldown": {
+    "description": "冷却轮数",
+    "type": "int",
+    "default": 2,
+    "hint": "两次触发最少间隔轮数"
+  },
+  "backend": {
+    "description": "生图后端",
+    "type": "string",
+    "default": "novelai",
+    "hint": "novelai 或 sd_webui"
+  },
+  "nai_key": {
+    "description": "NovelAI API Key",
+    "type": "string",
+    "default": "",
+    "hint": "NovelAI 后端必填"
+  },
+  "sd_url": {
+    "description": "SD WebUI 地址",
+    "type": "string",
+    "default": "http://127.0.0.1:7860",
+    "hint": "Stable Diffusion WebUI 后端必填"
+  },
+  "width": {
+    "description": "图片宽度",
+    "type": "int",
+    "default": 768,
+    "hint": "生图宽度（像素）"
+  },
+  "height": {
+    "description": "图片高度",
+    "type": "int",
+    "default": 512,
+    "hint": "生图高度（像素）"
+  },
+  "steps": {
+    "description": "采样步数",
+    "type": "int",
+    "default": 28,
+    "hint": "步数越多质量越好但越慢"
+  },
+  "scale": {
+    "description": "CFG Scale",
+    "type": "float",
+    "default": 11.0,
+    "hint": "提示词引导强度（SD 建议 7，NovelAI 建议 11）"
+  },
+  "sampler": {
+    "description": "采样器",
+    "type": "string",
+    "default": "k_euler_ancestral",
+    "hint": "NovelAI: k_euler_ancestral, SD: DPM++ 2M Karras"
+  },
+  "seed": {
+    "description": "随机种子",
+    "type": "int",
+    "default": -1,
+    "hint": "-1 为随机"
+  },
+  "appearance": {
+    "description": "Bot 外貌特征",
+    "type": "string",
+    "default": "1girl, silver hair, blue eyes",
+    "hint": "每次生图自动注入"
+  },
+  "costume": {
+    "description": "服装描述",
+    "type": "string",
+    "default": "school uniform",
+    "hint": "可与外貌配合切换"
+  },
+  "artist_tags": {
+    "description": "画师串",
+    "type": "string",
+    "default": "",
+    "hint": "如 artist:ask, artist:anmi"
+  },
+  "positive_prefix": {
+    "description": "固定正面提示词",
+    "type": "string",
+    "default": "masterpiece, best quality",
+    "hint": "每次拼在 prompt 最前面"
+  },
+  "negative_prompt": {
+    "description": "负面提示词",
+    "type": "string",
+    "default": "lowres, bad anatomy, bad hands, extra fingers, worst quality",
+    "hint": "不希望出现的元素"
+  },
+  "prompt_llm_enabled": {
+    "description": "启用 Prompt 拼写 LLM",
+    "type": "bool",
+    "default": true,
+    "hint": "关掉则把最近聊天内容直接当 prompt 用"
+  },
+  "prompt_llm_api": {
+    "description": "Prompt LLM API 地址",
+    "type": "string",
+    "default": "",
+    "hint": "留空则复用 AstrBot 自带的 LLM"
+  },
+  "prompt_llm_key": {
+    "description": "Prompt LLM API Key",
+    "type": "string",
+    "default": "",
+    "hint": "留空则复用 AstrBot 自带的"
+  },
+  "prompt_llm_model": {
+    "description": "Prompt LLM 模型",
+    "type": "string",
+    "default": "",
+    "hint": "留空则复用 AstrBot 自带的"
+  },
+  "prompt_llm_system": {
+    "description": "Prompt LLM 系统提示词",
+    "type": "string",
+    "default": "",
+    "hint": "告诉 LLM 如何从对话中提炼生图 prompt。留空用内置默认"
+  }
+}
