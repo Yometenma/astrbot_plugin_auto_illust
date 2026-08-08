@@ -13,6 +13,8 @@ LLM 读取上下文 → 判断触发 → 提炼 prompt → 注入预设 → 生�
 """
 
 import asyncio
+import os
+import tempfile
 from io import BytesIO
 
 from astrbot.api.event import filter, AstrMessageEvent
@@ -51,6 +53,8 @@ class AutoIllustPlugin(Star):
             f"触发: {self.cfg.trigger_mode} | "
             f"Prompt LLM: {'开' if self.cfg.prompt_llm_enabled else '关'}"
         )
+        self._temp_dir = tempfile.TemporaryDirectory(prefix="auto_illust_")
+        self._cleanup_old_images()
 
     # ==================== 消息钩子 ====================
 
