@@ -5,15 +5,13 @@ astrbot_plugin_auto_illust
 在聊天过程中自动为 Bot 回复配图。
 LLM 读取上下文 → 判断触发 → 提炼 prompt → 注入预设 → 生图 → 插入回复。
 
-支持后端: NovelAI / Stable Diffusion WebUI
+支持后端: NovelAI / SD WebUI / ComfyUI
 触发模式: 概率 / 间隔 / 手动
 
 作者：yometenma
 版本：1.0.0
 """
 
-import asyncio
-import os
 import tempfile
 from io import BytesIO
 
@@ -44,7 +42,7 @@ class AutoIllustPlugin(Star):
         self.trigger_mgr = TriggerManager(self.cfg)
         self.prompt_builder = PromptBuilder(self.cfg)
         self._msg_count = 0
-        self._context_cache: list[dict] = []
+        self._context_cache: list[str] = []
 
     async def initialize(self) -> None:
         self.logger.info(
@@ -57,6 +55,15 @@ class AutoIllustPlugin(Star):
         self._cleanup_old_images()
 
     # ==================== 消息钩子 ====================
+
+    @filter.platform_adapter_type(filter.PlatformAdapterType.ALL)
+    async def on_message(self, event: AstrMessageEvent):
+        """捕获用户消息。"""
+        msg = event.message_str or ""
+        if msg.strip():
+            self._context_cache.append(f"用户: {msg}")
+            if len(self._context_cache) > 20:
+                self._context_cache = self._context_cache[-20:]
 
     @filter.after_message_sent()
     async def on_bot_reply(self, event: AstrMessageEvent):
