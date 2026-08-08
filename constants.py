@@ -3,6 +3,7 @@
 # 后端类型
 BACKEND_NOVELAI = "novelai"
 BACKEND_SD_WEBUI = "sd_webui"
+BACKEND_COMFYUI = "comfyui"
 
 # 触发模式
 TRIGGER_PROBABILITY = "probability"

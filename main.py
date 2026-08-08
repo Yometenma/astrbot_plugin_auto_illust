@@ -22,7 +22,7 @@ from astrbot.api.star import Context, Star, register
 from .config import PluginConfig
 from .trigger import TriggerManager
 from .prompt_builder import PromptBuilder
-from .constants import BACKEND_NOVELAI, BACKEND_SD_WEBUI
+from .constants import BACKEND_NOVELAI, BACKEND_SD_WEBUI, BACKEND_COMFYUI
 
 __version__ = "1.0.0"
 
@@ -150,6 +150,18 @@ class AutoIllustPlugin(Star):
                 cfg_scale=self.cfg.scale,
                 sampler=self.cfg.sampler,
                 seed=self.cfg.seed,
+            )
+
+        if self.cfg.backend == BACKEND_COMFYUI:
+            if not self.cfg.comfyui_workflow:
+                self.logger.error("未配置 ComfyUI 工作流")
+                return None
+            from .backends.comfyui import generate_comfyui
+            return await generate_comfyui(
+                prompt=prompt,
+                negative_prompt=self.cfg.negative_prompt,
+                comfyui_url=self.cfg.comfyui_url,
+                workflow_json=self.cfg.comfyui_workflow,
             )
 
         self.logger.error(f"不支持的后端: {self.cfg.backend}")

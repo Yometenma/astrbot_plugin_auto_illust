@@ -27,7 +27,7 @@
     "description": "生图后端",
     "type": "string",
     "default": "novelai",
-    "hint": "novelai 或 sd_webui"
+    "hint": "novelai / sd_webui / comfyui"
   },
   "nai_key": {
     "description": "NovelAI API Key",
@@ -136,5 +136,17 @@
     "type": "string",
     "default": "",
     "hint": "告诉 LLM 如何从对话中提炼生图 prompt。留空用内置默认"
+  },
+  "comfyui_url": {
+    "description": "ComfyUI 地址",
+    "type": "string",
+    "default": "http://127.0.0.1:8188",
+    "hint": "ComfyUI 后端必填"
+  },
+  "comfyui_workflow": {
+    "description": "ComfyUI 工作流 JSON",
+    "type": "text",
+    "default": "",
+    "hint": "在 ComfyUI 中导出 API 格式工作流，在 prompt 文本处填入 [PROMPT] 和 [NEGATIVE_PROMPT] 占位符"
   }
 }
