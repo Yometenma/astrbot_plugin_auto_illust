@@ -12,7 +12,6 @@ LLM 读取上下文 → 判断触发 → 提炼 prompt → 注入预设 → 生�
 版本：1.0.0
 """
 
-import tempfile
 from io import BytesIO
 
 from astrbot.api.event import filter, AstrMessageEvent
@@ -51,14 +50,12 @@ class AutoIllustPlugin(Star):
             f"触发: {self.cfg.trigger_mode} | "
             f"Prompt LLM: {'开' if self.cfg.prompt_llm_enabled else '关'}"
         )
-        self._temp_dir = tempfile.TemporaryDirectory(prefix="auto_illust_")
-        self._cleanup_old_images()
 
     # ==================== 消息钩子 ====================
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.ALL)
     async def on_message(self, event: AstrMessageEvent):
-        """捕获用户消息。"""
+        """捕获用户消息到上下文缓存。"""
         msg = event.message_str or ""
         if msg.strip():
             self._context_cache.append(f"用户: {msg}")
@@ -67,32 +64,29 @@ class AutoIllustPlugin(Star):
 
     @filter.after_message_sent()
     async def on_bot_reply(self, event: AstrMessageEvent):
-        """Bot 回复后触发插图。"""
+        """Bot 回复后记录并触发插图。"""
         self._msg_count += 1
+
+        bot_msg = event.message_str or ""
+        if bot_msg.strip():
+            self._context_cache.append(f"Bot: {bot_msg}")
+            if len(self._context_cache) > 20:
+                self._context_cache = self._context_cache[-20:]
 
         if not self.trigger_mgr.should_trigger(self._msg_count):
             return
 
-        # 收集最近上下文
-        context = self._build_context(event)
-
+        context = self._build_context()
         try:
-            # 1. LLM 提炼 prompt
             provider = self.context.get_using_provider()
             refined = await self.prompt_builder.refine_prompt(context, provider)
-
-            # 2. 拼接预设
             full_prompt = self.prompt_builder.build_full_prompt(refined)
             self.logger.info(f"生图 prompt: {full_prompt[:150]}...")
 
-            # 3. 生图
             image_bytes = await self._generate(full_prompt)
             if not image_bytes:
                 return
-
-            # 4. 发送图片
             await self._send_image(event, image_bytes)
-
         except Exception as e:
             self.logger.error(f"配图失败: {e}", exc_info=True)
 
@@ -102,7 +96,7 @@ class AutoIllustPlugin(Star):
     async def cmd_illustrate(self, event: AstrMessageEvent):
         """手动触发配图。"""
         self.trigger_mgr.mark_triggered(self._msg_count)
-        context = self._build_context(event)
+        context = self._build_context()
         try:
             provider = self.context.get_using_provider()
             refined = await self.prompt_builder.refine_prompt(context, provider)
@@ -119,16 +113,9 @@ class AutoIllustPlugin(Star):
 
     # ==================== 内部方法 ====================
 
-    def _build_context(self, event: AstrMessageEvent) -> str:
+    def _build_context(self) -> str:
         """构建最近对话上下文文本。"""
-        msg = event.message_str or ""
-        self._context_cache.append({"role": "user", "content": msg})
-        if len(self._context_cache) > 10:
-            self._context_cache = self._context_cache[-10:]
-        return "\n".join(
-            f"{'用户' if m['role'] == 'user' else 'Bot'}: {m['content']}"
-            for m in self._context_cache[-6:]
-        )
+        return "\n".join(self._context_cache[-8:])
 
     async def _generate(self, prompt: str) -> bytes | None:
         """根据配置调用后端生成图片。"""
@@ -181,12 +168,7 @@ class AutoIllustPlugin(Star):
     async def _send_image(self, event: AstrMessageEvent, image_bytes: bytes):
         """用 AstrBot 发送图片。"""
         try:
-            # 尝试用 fromBytes + 平台发送
-            img = Image.fromBytes(
-                image_bytes,
-                format="png",
-            )
-            # 通过 event 回复
+            img = Image.fromBytes(image_bytes, format="png")
             await event.send(img)
         except Exception as e:
             self.logger.error(f"发送图片失败: {e}")
