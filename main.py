@@ -9,7 +9,7 @@ LLM 读取上下文 → 判断触发 → 提炼 prompt → 注入预设 → 生�
 触发模式: 概率 / 间隔 / 手动
 
 作者：yometenma
-版本：1.0.0
+版本：1.0.1
 """
 
 from io import BytesIO
@@ -23,7 +23,7 @@ from .trigger import TriggerManager
 from .prompt_builder import PromptBuilder
 from .constants import BACKEND_NOVELAI, BACKEND_SD_WEBUI, BACKEND_COMFYUI
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 @register(

@@ -2,7 +2,7 @@ name: astrbot_plugin_auto_illust
 display_name: 聊天自动配图
 short_desc: 聊天中自动生成插图，支持 NovelAI / Stable Diffusion，LLM 感知上下文按需生图
 desc: 在聊天过程中自动为 Bot 的回复配上插图。LLM 读取最近对话上下文，判断是否适合配图并生成对应 prompt，注入预设的画师串和正负面提示词后调用 NovelAI 或 Stable Diffusion WebUI 生图。
-version: 1.0.0
+version: 1.0.1
 author: yometenma
 repo: https://github.com/Yometenma/astrbot_plugin_auto_illust
 astrbot_version: ">=4.27.2"
